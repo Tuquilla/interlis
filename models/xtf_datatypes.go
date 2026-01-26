@@ -15,12 +15,28 @@ type Boundary struct {
 }
 
 type Surface struct {
-	Boundary Boundary `xml:"BOUNDARY"`
+	Boundary  Boundary   `xml:"BOUNDARY"`
+	Exterior  Exterior   `xml:"exterior"`
+	Interiors []Interior `xml:"interior"`
 }
+
+type MultiSurface struct {
+	Surfaces []Surface `xml:"surface"`
+}
+
+type Exterior struct {
+	Polyline Polyline `xml:"polyline"`
+}
+
+type Interior struct {
+	Polyline Polyline `xml:"polyline"`
+}
+
 type Geometries struct {
-	Surfaces  []Surface
-	Polylines []Polyline
-	Coords    []Coord
+	Surfaces      []Surface
+	MultiSurfaces []MultiSurface
+	Polylines     []Polyline
+	Coords        []Coord
 }
 
 type geometry interface {
