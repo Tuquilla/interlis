@@ -1,21 +1,21 @@
-package models
+package v2_4
 
 type Coord struct {
-	C1 string `xml:"C1"`
-	C2 string `xml:"C2"`
-	C3 string `xml:"C3"`
+	C1 string `xml:"c1"`
+	C2 string `xml:"c2"`
+	C3 string `xml:"c3"`
 }
 
 type Polyline struct {
-	Coords []Coord `xml:"COORD"`
+	Coords []Coord `xml:"coord"`
 }
 
 type Boundary struct {
-	Polyline Polyline `xml:"POLYLINE"`
+	Polyline Polyline `xml:"polyline"`
 }
 
 type Surface struct {
-	Boundary  Boundary   `xml:"BOUNDARY"`
+	Boundary  Boundary   `xml:"boundary"`
 	Exterior  Exterior   `xml:"exterior"`
 	Interiors []Interior `xml:"interior"`
 }

@@ -1,14 +1,14 @@
-package interlis
+package v2_3
 
 import (
 	"encoding/xml"
 	"fmt"
 
-	"github.com/tuquilla/interlis/models"
+	"github.com/tuquilla/interlis/models/v2_4"
 )
 
-func ReadGeometry(decoder *xml.Decoder) models.Geometries {
-	var geometries models.Geometries
+func ReadGeometry(decoder *xml.Decoder) v2_4.Geometries {
+	var geometries v2_4.Geometries
 	for {
 		tok, err := decoder.Token()
 		if err != nil {
@@ -17,7 +17,7 @@ func ReadGeometry(decoder *xml.Decoder) models.Geometries {
 		switch se := tok.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "SURFACE" {
-				var surface models.Surface
+				var surface v2_4.Surface
 				err := decoder.DecodeElement(&surface, &se)
 				if err != nil {
 					fmt.Println("Error at decoding SURFACE element")
@@ -26,7 +26,7 @@ func ReadGeometry(decoder *xml.Decoder) models.Geometries {
 				geometries.Surfaces = append(geometries.Surfaces, surface)
 			}
 			if se.Name.Local == "POLYLINE" {
-				var polyline models.Polyline
+				var polyline v2_4.Polyline
 				err := decoder.DecodeElement(&polyline, &se)
 				if err != nil {
 					fmt.Println("Error at decoding POLYLINE element")
@@ -35,7 +35,7 @@ func ReadGeometry(decoder *xml.Decoder) models.Geometries {
 				geometries.Polylines = append(geometries.Polylines, polyline)
 			}
 			if se.Name.Local == "COORD" {
-				var coord models.Coord
+				var coord v2_4.Coord
 				err := decoder.DecodeElement(&coord, &se)
 				if err != nil {
 					fmt.Println("Error at decoding COORD element")

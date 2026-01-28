@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tuquilla/interlis/models"
+	v2_5 "github.com/tuquilla/interlis/models/v2_4"
+	"github.com/tuquilla/interlis/reader/v2_4"
 )
 
-func ReadGeometry(decoder *xml.Decoder) models.Geometries {
-	var geometries models.Geometries
+func ReadGeometry(decoder *xml.Decoder) v2_5.Geometries {
+	//var geometries models.Geometries
+	var interlisVersion string
+checkVersion:
 	for {
 		tok, err := decoder.Token()
 		if err != nil {
@@ -17,42 +20,26 @@ func ReadGeometry(decoder *xml.Decoder) models.Geometries {
 		}
 		switch se := tok.(type) {
 		case xml.StartElement:
-			tagLow := strings.ToLower(se.Name.Local)
-			switch tagLow {
-			case "multisurface":
-				var multisurface models.MultiSurface
-				err := decoder.DecodeElement(&multisurface, &se)
-				if err != nil {
-					fmt.Println("Error at decoding SURFACE element")
-					return geometries
+			if strings.ToLower(se.Name.Local) == "transfer" {
+				for _, element := range se.Attr {
+					if element.Value == "http://www.interlis.ch/xtf/2.4/INTERLIS" {
+						interlisVersion = "2.4"
+						break checkVersion
+					}
+					if element.Value == "http://www.interlis.ch/INTERLIS2.3" {
+						interlisVersion = "2.3"
+						break checkVersion
+					}
 				}
-				geometries.MultiSurfaces = append(geometries.MultiSurfaces, multisurface)
-			case "surface":
-				var surface models.Surface
-				err := decoder.DecodeElement(&surface, &se)
-				if err != nil {
-					fmt.Println("Error at decoding SURFACE element")
-					return geometries
-				}
-				geometries.Surfaces = append(geometries.Surfaces, surface)
-			case "polyline":
-				var polyline models.Polyline
-				err := decoder.DecodeElement(&polyline, &se)
-				if err != nil {
-					fmt.Println("Error at decoding POLYLINE element")
-					return geometries
-				}
-				geometries.Polylines = append(geometries.Polylines, polyline)
-			case "coord":
-				var coord models.Coord
-				err := decoder.DecodeElement(&coord, &se)
-				if err != nil {
-					fmt.Println("Error at decoding COORD element")
-					return geometries
-				}
-				geometries.Coords = append(geometries.Coords, coord)
+				fmt.Println("No valid interlis version for this tool found")
+				break checkVersion
 			}
 		}
+	}
+	// TODO Run Version based on interlisVersion
+	var geometries v2_5.Geometries
+	if interlisVersion == "2.4" {
+		geometries = v2_4.ReadGeometry(decoder)
 	}
 	return geometries
 }
