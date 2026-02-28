@@ -39,18 +39,26 @@ type Geometries struct {
 	Coords        []Coord
 }
 
-type geometry interface {
-	Geometry() []string
+func (geometries Geometries) Point() []float64 {
+	return []float64{}
 }
 
-func (coord *Coord) Geometry() []string {
-	geometryArr := make([]string, 0)
+func (geometries Geometries) Points() [][]float64 {
+	return [][]float64{}
+}
 
-	geometryArr = append(geometryArr, coord.C1)
-	geometryArr = append(geometryArr, coord.C2)
-	if coord.C3 != "" {
-		geometryArr = append(geometryArr, coord.C3)
-	}
+func (geometries Geometries) Line() []float64 {
+	return []float64{}
+}
 
-	return geometryArr
+func (geometries Geometries) Lines() [][]float64 {
+	return [][]float64{}
+}
+
+func (geometries Geometries) Polygon() []float64 {
+	return []float64{}
+}
+
+func (geometries Geometries) Polygons() [][]float64 {
+	return [][]float64{}
 }

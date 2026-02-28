@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	v2_5 "github.com/tuquilla/interlis/models/v2_4"
+	"github.com/tuquilla/interlis/models"
+	"github.com/tuquilla/interlis/reader/v2_3"
 	"github.com/tuquilla/interlis/reader/v2_4"
 )
 
-func ReadGeometry(decoder *xml.Decoder) v2_5.Geometries {
+func ReadGeometry(decoder *xml.Decoder) models.Geometries {
 	//var geometries models.Geometries
 	var interlisVersion string
 checkVersion:
@@ -37,7 +38,11 @@ checkVersion:
 		}
 	}
 	// TODO Run Version based on interlisVersion
-	var geometries v2_5.Geometries
+	var geometries models.Geometries
+	if interlisVersion == "2.3" {
+		geometries = v2_3.ReadGeometry(decoder)
+	}
+
 	if interlisVersion == "2.4" {
 		geometries = v2_4.ReadGeometry(decoder)
 	}

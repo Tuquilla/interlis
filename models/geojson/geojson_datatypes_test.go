@@ -1,4 +1,4 @@
-package models
+package geojson
 
 import (
 	"encoding/json"
@@ -10,11 +10,11 @@ func TestGeojsonPoint(t *testing.T) {
 
 	// prepare point
 	pointCoordinate := []float64{2718659.49, 1228988.33}
-	pointJsonGeometry := jsonPointGeometry{"Point", pointCoordinate}
+	pointJsonGeometry := JsonPointGeometry{"Point", pointCoordinate}
 
-	pointFeature := feature{"Feature", pointJsonGeometry}
-	pointFeatureArr := []feature{pointFeature}
-	pointFeatureCollection := featureCollection{"FeatureCollection", pointFeatureArr}
+	pointFeature := Feature{"Feature", pointJsonGeometry}
+	pointFeatureArr := []Feature{pointFeature}
+	pointFeatureCollection := FeatureCollection{"FeatureCollection", pointFeatureArr}
 
 	jsonResult, err := json.Marshal(pointFeatureCollection)
 	if err != nil {
@@ -33,11 +33,11 @@ func TestGeojsonLine(t *testing.T) {
 	pointCoordinate1 := []float64{2718659.49, 1228988.33}
 	pointCoordinate2 := []float64{2718669.49, 1228998.33}
 	pointCoordinates = append(pointCoordinates, pointCoordinate1, pointCoordinate2)
-	pointJsonGeometry := jsonGeometry{"LineString", pointCoordinates}
+	pointJsonGeometry := JsonGeometry{"LineString", pointCoordinates}
 
-	pointFeature := feature{"Feature", pointJsonGeometry}
-	pointFeatureArr := []feature{pointFeature}
-	pointFeatureCollection := featureCollection{"FeatureCollection", pointFeatureArr}
+	pointFeature := Feature{"Feature", pointJsonGeometry}
+	pointFeatureArr := []Feature{pointFeature}
+	pointFeatureCollection := FeatureCollection{"FeatureCollection", pointFeatureArr}
 
 	jsonResult, err := json.Marshal(pointFeatureCollection)
 	if err != nil {
