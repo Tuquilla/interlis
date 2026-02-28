@@ -39,26 +39,26 @@ type Geometries struct {
 	Coords        []Coord
 }
 
-func (geometries Geometries) Point() []float64 {
-	return []float64{}
+func (geometries Geometries) Point() (string, []float64) {
+	return "point", []float64{}
 }
 
-func (geometries Geometries) Points() [][]float64 {
-	return [][]float64{}
+func (geometries Geometries) Points() (string, [][]float64) {
+	return "", [][]float64{}
 }
 
-func (geometries Geometries) Line() []float64 {
-	return []float64{}
+func (geometries Geometries) Line() (string, []float64) {
+	return "", []float64{}
 }
 
-func (geometries Geometries) Lines() [][]float64 {
-	return [][]float64{}
+func (geometries Geometries) Lines() (string, [][]float64) {
+	return "", [][]float64{}
 }
 
-func (geometries Geometries) Polygon() []float64 {
-	return []float64{}
+func (geometries Geometries) Polygon() (string, []float64) {
+	return "", []float64{}
 }
 
-func (geometries Geometries) Polygons() [][]float64 {
-	return [][]float64{}
+func (geometries Geometries) Polygons() (string, [][]float64) {
+	return "", [][]float64{}
 }

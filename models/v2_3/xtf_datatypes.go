@@ -29,38 +29,41 @@ type Geometries struct {
 	Coords    []Coord
 }
 
-func (geometries Geometries) Point() []float64 {
+func (geometries Geometries) Point() (string, []float64) {
 	point := make([]float64, 2)
 	for _, coords := range geometries.Coords {
 		coord1, err := strconv.ParseFloat(coords.C1, 64)
 		if err != nil {
 			fmt.Printf("Conversion of Point Coord failed, error: %s", err)
 		}
+
 		coord2, err := strconv.ParseFloat(coords.C2, 64)
 		if err != nil {
 			fmt.Printf("Conversion of Point Coord failed, error: %s", err)
 		}
-		point = append(point, coord1, coord2)
+
+		point[0] = coord1
+		point[1] = coord2
 	}
-	return point
+	return "Point", point
 }
 
-func (geometries Geometries) Points() [][]float64 {
-	return [][]float64{}
+func (geometries Geometries) Points() (string, [][]float64) {
+	return "", [][]float64{}
 }
 
-func (geometries Geometries) Line() []float64 {
-	return []float64{}
+func (geometries Geometries) Line() (string, []float64) {
+	return "", []float64{}
 }
 
-func (geometries Geometries) Lines() [][]float64 {
-	return [][]float64{}
+func (geometries Geometries) Lines() (string, [][]float64) {
+	return "", [][]float64{}
 }
 
-func (geometries Geometries) Polygon() []float64 {
-	return []float64{}
+func (geometries Geometries) Polygon() (string, []float64) {
+	return "", []float64{}
 }
 
-func (geometries Geometries) Polygons() [][]float64 {
-	return [][]float64{}
+func (geometries Geometries) Polygons() (string, [][]float64) {
+	return "", [][]float64{}
 }

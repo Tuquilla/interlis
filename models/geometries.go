@@ -1,10 +1,10 @@
 package models
 
 type Geometries interface {
-	Polygons() [][]float64
-	Polygon() []float64
-	Points() [][]float64
-	Point() []float64
-	Lines() [][]float64
-	Line() []float64
+	Polygons() (string, [][]float64)
+	Polygon() (string, []float64)
+	Points() (string, [][]float64)
+	Point() (string, []float64)
+	Lines() (string, [][]float64)
+	Line() (string, []float64)
 }
