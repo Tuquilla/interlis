@@ -33,7 +33,7 @@ func TestGeojsonLine(t *testing.T) {
 	pointCoordinate1 := []float64{2718659.49, 1228988.33}
 	pointCoordinate2 := []float64{2718669.49, 1228998.33}
 	pointCoordinates = append(pointCoordinates, pointCoordinate1, pointCoordinate2)
-	pointJsonGeometry := JsonGeometry{"LineString", pointCoordinates}
+	pointJsonGeometry := JsonLineGeometry{"LineString", pointCoordinates}
 
 	pointFeature := Feature{"Feature", pointJsonGeometry}
 	pointFeatureArr := []Feature{pointFeature}
