@@ -14,5 +14,5 @@ func TestGeojsonCreation(t *testing.T) {
 	decoder := xml.NewDecoder(xtf)
 
 	geometries := interlis.ReadGeometry(decoder)
-	Geojson(geometries)
+	Geojson(geometries, "")
 }

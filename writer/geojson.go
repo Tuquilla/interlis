@@ -3,23 +3,21 @@ package writer
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/tuquilla/interlis/models"
 	"github.com/tuquilla/interlis/models/geojson"
 )
 
-func Geojson(geometries models.Geometries) {
+func Geojson(geometries models.Geometries, outputFilePath string) {
 	featureCollection := geojson.CreateFeatureCollection()
 	var feature geojson.Feature
 
 	// Point
 	pointGeometries := geometries.Point()
-	if pointGeometries != nil {
-		for _, point := range pointGeometries {
-			feature = geojson.CreatePointFeature(point)
-			featureCollection.AddFeature(feature)
-		}
-
+	for _, point := range pointGeometries {
+		feature = geojson.CreatePointFeature(point)
+		featureCollection.AddFeature(feature)
 	}
 
 	// MultiPoint
@@ -31,11 +29,9 @@ func Geojson(geometries models.Geometries) {
 
 	// LineString
 	lineStrings := geometries.Line()
-	if lineStrings != nil {
-		for _, lineString := range lineStrings {
-			feature = geojson.CreateLineFeature("LineString", lineString)
-			featureCollection.AddFeature(feature)
-		}
+	for _, lineString := range lineStrings {
+		feature = geojson.CreateLineFeature("LineString", lineString)
+		featureCollection.AddFeature(feature)
 	}
 
 	//MultiLineString
@@ -47,11 +43,9 @@ func Geojson(geometries models.Geometries) {
 
 	//Polygon
 	polygons := geometries.Polygon()
-	if polygons != nil {
-		for _, polygon := range polygons {
-			feature = geojson.CreatePolygonFeature("Polygon", polygon)
-			featureCollection.AddFeature(feature)
-		}
+	for _, polygon := range polygons {
+		feature = geojson.CreatePolygonFeature("Polygon", polygon)
+		featureCollection.AddFeature(feature)
 	}
 
 	//MultiPolygon
@@ -65,5 +59,24 @@ func Geojson(geometries models.Geometries) {
 	if err != nil {
 		fmt.Printf("Error marshalling json, %v", err)
 	}
-	fmt.Println(string(jsonResult))
+
+	if outputFilePath == "" {
+		fmt.Println(string(jsonResult))
+		return
+	}
+
+	writeToFile(jsonResult, outputFilePath)
+	return
+}
+
+func writeToFile(output []byte, path string) {
+	f, err := os.Create(path)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer f.Close()
+
+	f.Write(output)
+
 }
