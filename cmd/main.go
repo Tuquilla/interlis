@@ -53,7 +53,10 @@ func main() {
 
 	switch format {
 	case "geojson":
-		writer.Geojson(geometries, outputFilePath)
+		err := writer.Geojson(geometries, outputFilePath)
+		if err != nil {
+			fmt.Println(err)
+		}
 	default:
 		fmt.Printf("Format %s is not supported\n", format)
 	}

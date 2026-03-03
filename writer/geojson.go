@@ -9,7 +9,7 @@ import (
 	"github.com/tuquilla/interlis/models/geojson"
 )
 
-func Geojson(geometries models.Geometries, outputFilePath string) {
+func Geojson(geometries models.Geometries, outputFilePath string) error {
 	featureCollection := geojson.CreateFeatureCollection()
 	var feature geojson.Feature
 
@@ -62,21 +62,27 @@ func Geojson(geometries models.Geometries, outputFilePath string) {
 
 	if outputFilePath == "" {
 		fmt.Println(string(jsonResult))
-		return
+		return nil
 	}
 
-	writeToFile(jsonResult, outputFilePath)
-	return
+	err = writeToFile(jsonResult, outputFilePath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func writeToFile(output []byte, path string) {
+func writeToFile(output []byte, path string) error {
 	f, err := os.Create(path)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return fmt.Errorf("Error creating geojson file, error: %v", err)
 	}
 	defer f.Close()
 
-	f.Write(output)
-
+	_, err = f.Write(output)
+	if err != nil {
+		return fmt.Errorf("Error writing to geojson file, error: %v", err)
+	}
+	return nil
 }
