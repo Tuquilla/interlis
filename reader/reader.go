@@ -11,7 +11,6 @@ import (
 )
 
 func ReadGeometry(decoder *xml.Decoder) models.Geometries {
-	//var geometries models.Geometries
 	var interlisVersion string
 checkVersion:
 	for {
@@ -37,7 +36,7 @@ checkVersion:
 			}
 		}
 	}
-	// TODO Run Version based on interlisVersion
+
 	var geometries models.Geometries
 	if interlisVersion == "2.3" {
 		geometries = v2_3.ReadGeometry(decoder)

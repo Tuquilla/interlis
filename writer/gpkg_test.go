@@ -8,11 +8,11 @@ import (
 	reader "github.com/tuquilla/interlis/reader"
 )
 
-func TestGeojsonCreation(t *testing.T) {
+func TestGPKGCreation(t *testing.T) {
 	xtf, _ := os.Open("test.xtf")
 	defer xtf.Close()
 	decoder := xml.NewDecoder(xtf)
 
 	geometries := reader.ReadGeometry(decoder)
-	Geojson(geometries, "")
+	Gpkg(geometries, "test.gpkg")
 }

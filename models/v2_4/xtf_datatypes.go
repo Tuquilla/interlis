@@ -43,22 +43,34 @@ func (geometries Geometries) Point() [][]float64 {
 	return [][]float64(nil)
 }
 
+func (geometries Geometries) PointWkt() []string { return nil }
+
 func (geometries Geometries) Points() [][]float64 {
 	return [][]float64(nil)
 }
+
+func (geometries Geometries) PointsWkt() []string { return nil }
 
 func (geometries Geometries) Line() [][][]float64 {
 	return [][][]float64(nil)
 }
 
+func (geometries Geometries) LineWkt() []string { return nil }
+
 func (geometries Geometries) Lines() [][]float64 {
 	return [][]float64(nil)
 }
+
+func (geometries Geometries) LinesWkt() []string { return nil }
 
 func (geometries Geometries) Polygon() [][][][]float64 {
 	return [][][][]float64(nil)
 }
 
+func (geometries Geometries) PolygonWkt() []string { return nil }
+
 func (geometries Geometries) Polygons() [][]float64 {
 	return [][]float64(nil)
 }
+
+func (geometries Geometries) PolygonsWkt() []string { return nil }

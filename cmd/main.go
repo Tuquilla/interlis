@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tuquilla/interlis"
+	interlis "github.com/tuquilla/interlis/reader"
 	"github.com/tuquilla/interlis/writer"
 )
 
@@ -20,20 +20,20 @@ func main() {
 	for i := 1; i < len(args); i++ {
 
 		// Check options (needs --option)
-		if i == 1 {
-			format = args[i]
-		}
 
-		if i == 2 {
+		switch i {
+		case 1:
+			format = args[i]
+
+		case 2:
 			path, err := filepath.Abs(args[i])
 			if err != nil {
 				fmt.Printf("Error with input file path, error: %v", err)
 				return
 			}
 			inputFilePath = path
-		}
 
-		if i == 3 {
+		case 3:
 			path, err := filepath.Abs(args[i])
 			if err != nil {
 				fmt.Printf("Error with input file path, error: %v", err)
