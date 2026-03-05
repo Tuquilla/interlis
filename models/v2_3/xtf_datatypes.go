@@ -130,15 +130,31 @@ func (geometries Geometries) PolygonWkt() []string {
 	for _, boundaries := range geometries.Surfaces {
 		var polygon strings.Builder
 		polygon.WriteString("POLYGON (")
-		for _, boundary := range boundaries.Boundaries {
+		for boundaryIndex, _ := range boundaries.Boundaries {
+
+			// Check for ogc standard for polygons
+			if boundaryIndex == 0 {
+				if boundaries.Boundaries[boundaryIndex].IsPolygonClockwise() == true {
+					boundaries.Boundaries[boundaryIndex].InversePolygonOrientation()
+				}
+			}
+			if boundaryIndex > 0 {
+				if boundaries.Boundaries[boundaryIndex].IsPolygonClockwise() == false {
+					boundaries.Boundaries[boundaryIndex].InversePolygonOrientation()
+				}
+			}
+
 			polygon.WriteString("(")
-			for index, coord := range boundary.Polyline.Coords {
+			for index, coord := range boundaries.Boundaries[boundaryIndex].Polyline.Coords {
 				fmt.Fprintf(&polygon, "%s %s", coord.C1, coord.C2)
-				if index < len(boundary.Polyline.Coords)-1 {
+				if index < len(boundaries.Boundaries[boundaryIndex].Polyline.Coords)-1 {
 					polygon.WriteString(", ")
 				}
 			}
 			polygon.WriteString(")")
+			if boundaryIndex < len(boundaries.Boundaries)-1 {
+				polygon.WriteString(", ")
+			}
 		}
 		polygon.WriteString(")")
 		polygons = append(polygons, polygon.String())
@@ -179,10 +195,10 @@ func (geometries Geometries) Polygon() [][][][]float64 {
 
 func (geometries Geometries) PolygonsWkt() []string { return nil }
 
-func (boundary *Boundary) isPolygonClockwise() bool {
+func (boundary *Boundary) IsPolygonClockwise() bool {
 	sum := 0.0
-	for index := 0; index < len(boundary.Polyline.Coords)-1; index++ {
-		coords := boundary.Polyline.Coords
+	coords := boundary.Polyline.Coords
+	for index := 0; index < len(coords)-1; index++ {
 		x1, _ := strconv.ParseFloat(coords[index].C1, 64)
 		x2, _ := strconv.ParseFloat(coords[index+1].C1, 64)
 		y1, _ := strconv.ParseFloat(coords[index].C2, 64)
@@ -197,7 +213,12 @@ func (boundary *Boundary) isPolygonClockwise() bool {
 	return false
 }
 
-// Todo implement
-func (Boundary *Boundary) inversePolygonOrientation() {
-
+func (boundary *Boundary) InversePolygonOrientation() {
+	coords := boundary.Polyline.Coords
+	for index := 0; index < len(coords)/2; index++ {
+		firstCoord := coords[index]
+		secondCoord := coords[len(coords)-(index+1)]
+		coords[index] = secondCoord
+		coords[len(coords)-(index+1)] = firstCoord
+	}
 }

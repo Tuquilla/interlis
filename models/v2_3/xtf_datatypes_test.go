@@ -25,7 +25,7 @@ func TestIsClockwise(t *testing.T) {
 	polyline := Polyline{Coords: clockwiseCoords}
 	boundary := Boundary{Polyline: polyline}
 
-	isClockwise := boundary.isPolygonClockwise()
+	isClockwise := boundary.IsPolygonClockwise()
 
 	if isClockwise == false {
 		t.Errorf("Polygon should be clockwise but isn't")
@@ -37,7 +37,7 @@ func TestIsNotClockwise(t *testing.T) {
 	polyline := Polyline{Coords: counterclockwiseCoords}
 	boundary := Boundary{Polyline: polyline}
 
-	isClockwise := boundary.isPolygonClockwise()
+	isClockwise := boundary.IsPolygonClockwise()
 
 	if isClockwise == true {
 		t.Errorf("Polygon should be counterclockwise but isn't")
@@ -45,5 +45,20 @@ func TestIsNotClockwise(t *testing.T) {
 }
 
 func TestInversePolygonOrientation(t *testing.T) {
+	counterclockwiseCoords := []Coord{{C1: "0", C2: "0"}, {C1: "1", C2: "0"}, {C1: "1", C2: "1"}, {C1: "0", C2: "1"}, {C1: "0", C2: "0"}}
+	polyline := Polyline{Coords: counterclockwiseCoords}
+	boundary := Boundary{Polyline: polyline}
+	isClockwise := boundary.IsPolygonClockwise()
+
+	if isClockwise == true {
+		t.Errorf("Polygon should be counterclockwise but isn't")
+	}
+
+	boundary.InversePolygonOrientation()
+	isClockwise = boundary.IsPolygonClockwise()
+
+	if isClockwise == false {
+		t.Errorf("Inversed polygon should be clockwise but isn't")
+	}
 
 }

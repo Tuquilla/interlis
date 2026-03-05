@@ -7,7 +7,7 @@ import (
 	"github.com/tuquilla/interlis/models"
 )
 
-func Gpkg(geometries models.Geometries, outputFilePath string) {
+func Gpkg(geometries models.Geometries, outputFilePath string) error {
 
 	driver, err := gdal.GetDriverByName("GPKG")
 	if err != nil {
@@ -25,44 +25,51 @@ func Gpkg(geometries models.Geometries, outputFilePath string) {
 
 	// Points
 	geometryList = geometries.PointWkt()
-	layer = dataset.CreateLayer("points", srs, gdal.GT_Point, nil)
-	for _, geometryElement := range geometryList {
-		geometry, err := gdal.CreateFromWKT(geometryElement, srs)
-		if err != nil {
-			fmt.Printf("Error creating point layer for gpkg, err: %v", err)
-		}
+	if geometryList != nil {
+		layer = dataset.CreateLayer("points", srs, gdal.GT_Point, nil)
+		for _, geometryElement := range geometryList {
+			geometry, err := gdal.CreateFromWKT(geometryElement, srs)
+			if err != nil {
+				return fmt.Errorf("Error creating point layer for gpkg, err: %v", err)
+			}
 
-		feature := layer.Definition().Create()
-		feature.SetGeometry(geometry)
-		layer.Create(feature)
+			feature := layer.Definition().Create()
+			feature.SetGeometry(geometry)
+			layer.Create(feature)
+		}
 	}
 
 	// Lines
 	geometryList = geometries.LineWkt()
-	layer = dataset.CreateLayer("lines", srs, gdal.GT_LineString, nil)
-	for _, geometryElement := range geometryList {
-		geometry, err := gdal.CreateFromWKT(geometryElement, srs)
-		if err != nil {
-			fmt.Printf("Error creating line layer for gpkg, err: %v", err)
-		}
+	if geometryList != nil {
+		layer = dataset.CreateLayer("lines", srs, gdal.GT_LineString, nil)
+		for _, geometryElement := range geometryList {
+			geometry, err := gdal.CreateFromWKT(geometryElement, srs)
+			if err != nil {
+				return fmt.Errorf("Error creating line layer for gpkg, err: %v", err)
+			}
 
-		feature := layer.Definition().Create()
-		feature.SetGeometry(geometry)
-		layer.Create(feature)
+			feature := layer.Definition().Create()
+			feature.SetGeometry(geometry)
+			layer.Create(feature)
+		}
 	}
 
 	// Polygons
 	geometryList = geometries.PolygonWkt()
-	layer = dataset.CreateLayer("polygon", srs, gdal.GT_Polygon, nil)
-	for _, geometryElement := range geometryList {
-		geometry, err := gdal.CreateFromWKT(geometryElement, srs)
-		fmt.Println("Polygonlist: ", geometryElement)
-		if err != nil {
-			fmt.Printf("Error creating polygon layer for gpkg, error: %v", err)
-		}
+	if geometryList != nil {
+		layer = dataset.CreateLayer("polygon", srs, gdal.GT_Polygon, nil)
+		for _, geometryElement := range geometryList {
+			geometry, err := gdal.CreateFromWKT(geometryElement, srs)
+			if err != nil {
+				return fmt.Errorf("Error creating polygon layer for gpkg, error: %v", err)
+			}
 
-		feature := layer.Definition().Create()
-		feature.SetGeometry(geometry)
-		layer.Create(feature)
+			feature := layer.Definition().Create()
+			feature.SetGeometry(geometry)
+			layer.Create(feature)
+		}
 	}
+
+	return nil
 }

@@ -55,7 +55,12 @@ func main() {
 	case "geojson":
 		err := writer.Geojson(geometries, outputFilePath)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(err.Error())
+		}
+	case "gpkg":
+		err := writer.Gpkg(geometries, outputFilePath)
+		if err != nil {
+			fmt.Println(err.Error())
 		}
 	default:
 		fmt.Printf("Format %s is not supported\n", format)
