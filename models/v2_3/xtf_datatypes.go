@@ -130,7 +130,7 @@ func (geometries Geometries) PolygonWkt() []string {
 	for _, boundaries := range geometries.Surfaces {
 		var polygon strings.Builder
 		polygon.WriteString("POLYGON (")
-		for boundaryIndex, _ := range boundaries.Boundaries {
+		for boundaryIndex := range boundaries.Boundaries {
 
 			// Check for ogc standard for polygons
 			if boundaryIndex == 0 {

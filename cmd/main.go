@@ -43,8 +43,8 @@ func main() {
 		}
 	}
 
-	fmt.Println("Format: ", format)
-	fmt.Println("Output Filepath: ", outputFilePath)
+	fmt.Println("Format:", format)
+	fmt.Println("Output Filepath:", outputFilePath)
 
 	xtf, _ := os.Open(inputFilePath)
 	defer xtf.Close()
