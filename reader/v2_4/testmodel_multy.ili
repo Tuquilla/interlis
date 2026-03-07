@@ -1,0 +1,46 @@
+INTERLIS 2.4;
+!!@ furtherInformation = https://www.cadastre-manual.admin.ch/de/modelldokumentation-dmav
+MODEL TESTMODEL_MULTY_V1 (en) AT "http://test.ch" VERSION "2026_01_26" = 
+    IMPORTS GeometryCHLV95_V2;
+
+    TOPIC Multi = 
+        CLASS Multipolygon =
+            Id: 0..1000;
+            Id2: 0..1000;
+            Multi_Surface: GeometryCHLV95_V2.MultiSurfaceWithoutArcs;
+        END Multipolygon;
+
+        CLASS Multiline = 
+            Id: 0..1000;
+            Multi_Line: GeometryCHLV95_V2.MultiLineWithoutArcs;    
+        END Multiline;
+
+        CLASS Multipoint = 
+            Id: 0..1000;
+            Multi_Point: GeometryCHLV95_V2.MultiPoint;
+        END Multipoint;
+    END Multi;
+
+    TOPIC Single = 
+        CLASS Polygon_surface = 
+            Id: 0..1000;
+            Surface: GeometryCHLV95_V2.Surface;
+        END Polygon_surface;
+
+        CLASS Polygon_area = 
+            Id: 0..1000;
+            Area: GeometryCHLV95_V2.Area;
+        END Polygon_area;
+
+        CLASS Line_without_arcs = 
+            Id: 0..1000;
+            Line: GeometryCHLV95_V2.LineWithoutArcs;
+        END Line_without_arcs;
+
+        CLASS Point =
+            Id: 0..1000;
+            Point: GeometryCHLV95_V2.Coord2;        
+        END Point;
+    END Single;    
+
+END TESTMODEL_MULTY_V1.
