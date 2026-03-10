@@ -12,8 +12,16 @@ type Coord struct {
 	C3 string `xml:"c3"`
 }
 
+type MultiCoord struct {
+	Coords []Coord `xml:"coord"`
+}
+
 type Polyline struct {
 	Coords []Coord `xml:"coord"`
+}
+
+type MultiPolyline struct {
+	Polylines []Polyline `xml:"polyline"`
 }
 
 type Surface struct {
@@ -34,10 +42,12 @@ type Interior struct {
 }
 
 type Geometries struct {
-	Surfaces      []Surface
-	MultiSurfaces []MultiSurface
-	Polylines     []Polyline
-	Coords        []Coord
+	Surfaces       []Surface
+	MultiSurfaces  []MultiSurface
+	Polylines      []Polyline
+	MutliPolylines []MultiPolyline
+	Coords         []Coord
+	MultiCoords    []MultiCoord
 }
 
 func (geometries Geometries) Point() [][]float64 {
@@ -58,7 +68,24 @@ func (geometries Geometries) Points() [][]float64 {
 	return [][]float64(nil)
 }
 
-func (geometries Geometries) PointsWkt() []string { return nil }
+func (geometries Geometries) PointsWkt() []string {
+	multiPoints := []string(nil)
+
+	for _, multiCoord := range geometries.MultiCoords {
+		var multiPoint strings.Builder
+		multiPoint.WriteString("MULTIPOINT (")
+		for index, coord := range multiCoord.Coords {
+			fmt.Fprintf(&multiPoint, "(%s %s)", coord.C1, coord.C2)
+			if index < len(multiCoord.Coords)-1 {
+				multiPoint.WriteString(", ")
+			}
+		}
+		multiPoint.WriteString(")")
+		multiPoints = append(multiPoints, multiPoint.String())
+	}
+
+	return multiPoints
+}
 
 func (geometries Geometries) Line() [][][]float64 {
 	return [][][]float64(nil)
@@ -87,7 +114,31 @@ func (geometries Geometries) Lines() [][]float64 {
 	return [][]float64(nil)
 }
 
-func (geometries Geometries) LinesWkt() []string { return nil }
+func (geometries Geometries) LinesWkt() []string {
+	var multiLines = []string(nil)
+
+	for _, multiPolyline := range geometries.MutliPolylines {
+		var multiLine strings.Builder
+		multiLine.WriteString("MULTILINESTRING (")
+		for lineIndex, line := range multiPolyline.Polylines {
+			multiLine.WriteString("(")
+			for coordIndex, coord := range line.Coords {
+				fmt.Fprintf(&multiLine, "%s %s", coord.C1, coord.C2)
+				if coordIndex < len(line.Coords)-1 {
+					multiLine.WriteString(", ")
+				}
+			}
+			multiLine.WriteString(")")
+			if lineIndex < len(multiPolyline.Polylines)-1 {
+				multiLine.WriteString(", ")
+			}
+		}
+		multiLine.WriteString(")")
+		multiLines = append(multiLines, multiLine.String())
+	}
+
+	return multiLines
+}
 
 func (geometries Geometries) Polygon() [][][][]float64 {
 	return [][][][]float64(nil)
@@ -138,7 +189,54 @@ func (geometries Geometries) Polygons() [][]float64 {
 	return [][]float64(nil)
 }
 
-func (geometries Geometries) PolygonsWkt() []string { return nil }
+func (geometries Geometries) PolygonsWkt() []string {
+	var multiPolygons = []string(nil)
+
+	for _, multisurface := range geometries.MultiSurfaces {
+		var multiPolygon strings.Builder
+		multiPolygon.WriteString("MULTIPOLYGON (")
+
+		for surfaceIndex, surface := range multisurface.Surfaces {
+			multiPolygon.WriteString("(")
+
+			if surface.Exterior.Polyline.IsPolygonClockwise() == true {
+				surface.Exterior.Polyline.InversePolygonOrientation()
+			}
+
+			multiPolygon.WriteString("(")
+			for index, coord := range surface.Exterior.Polyline.Coords {
+				fmt.Fprintf(&multiPolygon, "%s %s", coord.C1, coord.C2)
+				if index < len(surface.Exterior.Polyline.Coords)-1 {
+					multiPolygon.WriteString(", ")
+				}
+			}
+			multiPolygon.WriteString(")")
+
+			for interiorIndex := range surface.Interiors {
+				multiPolygon.WriteString(", ")
+				if surface.Interiors[interiorIndex].Polyline.IsPolygonClockwise() == false {
+					surface.Interiors[interiorIndex].Polyline.InversePolygonOrientation()
+				}
+				multiPolygon.WriteString("(")
+				for index, coord := range surface.Interiors[interiorIndex].Polyline.Coords {
+					fmt.Fprintf(&multiPolygon, "%s %s", coord.C1, coord.C2)
+					if index < len(surface.Interiors[interiorIndex].Polyline.Coords)-1 {
+						multiPolygon.WriteString(", ")
+					}
+				}
+				multiPolygon.WriteString(")")
+			}
+			multiPolygon.WriteString(")")
+			if surfaceIndex < len(multisurface.Surfaces)-1 {
+				multiPolygon.WriteString(", ")
+			}
+		}
+		multiPolygon.WriteString(")")
+		multiPolygons = append(multiPolygons, multiPolygon.String())
+	}
+
+	return multiPolygons
+}
 
 func (polyline *Polyline) IsPolygonClockwise() bool {
 	sum := 0.0

@@ -21,55 +21,75 @@ func Gpkg(geometries models.Geometries, outputFilePath string) error {
 	srs.FromEPSG(2056)
 
 	var geometryList []string
-	var layer gdal.Layer
 
 	// Points
 	geometryList = geometries.PointWkt()
 	if geometryList != nil {
-		layer = dataset.CreateLayer("points", srs, gdal.GT_Point, nil)
-		for _, geometryElement := range geometryList {
-			geometry, err := gdal.CreateFromWKT(geometryElement, srs)
-			if err != nil {
-				return fmt.Errorf("Error creating point layer for gpkg, err: %v", err)
-			}
+		err := createLayer(&dataset, srs, "points", geometryList, gdal.GT_Point)
+		if err != nil {
+			return err
+		}
+	}
 
-			feature := layer.Definition().Create()
-			feature.SetGeometry(geometry)
-			layer.Create(feature)
+	// Multipoints
+	geometryList = geometries.PointsWkt()
+	if geometryList != nil {
+		err := createLayer(&dataset, srs, "multipoints", geometryList, gdal.GT_MultiPoint)
+		if err != nil {
+			return err
 		}
 	}
 
 	// Lines
 	geometryList = geometries.LineWkt()
 	if geometryList != nil {
-		layer = dataset.CreateLayer("lines", srs, gdal.GT_LineString, nil)
-		for _, geometryElement := range geometryList {
-			geometry, err := gdal.CreateFromWKT(geometryElement, srs)
-			if err != nil {
-				return fmt.Errorf("Error creating line layer for gpkg, err: %v", err)
-			}
+		err := createLayer(&dataset, srs, "lines", geometryList, gdal.GT_LineString)
+		if err != nil {
+			return err
+		}
+	}
 
-			feature := layer.Definition().Create()
-			feature.SetGeometry(geometry)
-			layer.Create(feature)
+	// Multilines
+	geometryList = geometries.LinesWkt()
+	if geometryList != nil {
+		err := createLayer(&dataset, srs, "multilines", geometryList, gdal.GT_MultiLineString)
+		if err != nil {
+			return err
 		}
 	}
 
 	// Polygons
 	geometryList = geometries.PolygonWkt()
 	if geometryList != nil {
-		layer = dataset.CreateLayer("polygon", srs, gdal.GT_Polygon, nil)
-		for _, geometryElement := range geometryList {
-			geometry, err := gdal.CreateFromWKT(geometryElement, srs)
-			if err != nil {
-				return fmt.Errorf("Error creating polygon layer for gpkg, error: %v", err)
-			}
-
-			feature := layer.Definition().Create()
-			feature.SetGeometry(geometry)
-			layer.Create(feature)
+		err := createLayer(&dataset, srs, "polygons", geometryList, gdal.GT_Polygon)
+		if err != nil {
+			return err
 		}
 	}
 
+	// Multipolygons
+	geometryList = geometries.PolygonsWkt()
+	if geometryList != nil {
+		err := createLayer(&dataset, srs, "multipolygons", geometryList, gdal.GT_MultiPolygon)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func createLayer(dataset *gdal.Dataset, srs gdal.SpatialReference, layername string, geometryList []string, geometryTyp gdal.GeometryType) error {
+	layer := dataset.CreateLayer(layername, srs, geometryTyp, nil)
+	for _, geometryElement := range geometryList {
+		geometry, err := gdal.CreateFromWKT(geometryElement, srs)
+		if err != nil {
+			return fmt.Errorf("Error creating layer: %s, error: %v", layername, err)
+		}
+
+		feature := layer.Definition().Create()
+		feature.SetGeometry(geometry)
+		layer.Create(feature)
+	}
 	return nil
 }
